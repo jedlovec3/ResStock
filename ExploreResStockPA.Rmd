@@ -4,10 +4,67 @@ output: html_notebook
 ---
 
 
-
 ```{r}
-plot(cars)
+library(tidyverse)
+library(googlesheets4)
+library(hms)
 ```
 
+
+PA Residential Energy Usage
+```{r}
+gs4_deauth()
+
+resstock_load_pa_import <- read_sheet("https://docs.google.com/spreadsheets/d/1A0ISfO6WWJzth-ttnGW6Yqfo32J1E6tl7xc_qj-oHuY/edit?usp=sharing")
+
+resstock_load_pa_import 
+```
+
+```{r}
+
+resstock_load_pa <- rename_with(resstock_load_pa_import, ~str_replace(.,"^baseline.out.",""), starts_with("baseline.out."))
+
+resstock_load_pa <- rename_with(resstock_load_pa, ~str_replace(.,".energy_consumption.kwh",""), ends_with(".energy_consumption.kwh"))
+
+resstock_load_pa <- resstock_load_pa %>% 
+  rename(datetime = `Timestamp (EST)`) %>% 
+  mutate(datetime = as.POSIXct(datetime,format="%Y-%m-%d %H:%M:%S",tz="America/New_York")) %>% 
+  mutate(date = date(datetime), time = as.hms(format(datetime, format = "%H:%M:%S")), month = month(datetime, label=TRUE), year = year(datetime), day = day(datetime))
+
+resstock_load_pa %>% 
+  relocate(!contains(".") , .after = datetime)
+
+```
+
+```{r}
+
+(resstock_load_pa_annual <- resstock_load_pa %>% 
+  summarize(across(contains("."), sum)))
+
+(resstock_load_pa_date <- resstock_load_pa %>% 
+  group_by(date) %>% 
+  summarize(across(contains("."), sum)))
+
+(resstock_load_pa_time <- resstock_load_pa %>% 
+  group_by(time) %>% 
+  summarize(across(contains("."), sum)))
+
+```
+
+
+```{r}
+
+resstock_load_pa_time_pivot <- resstock_load_pa_time %>% 
+  pivot_longer(!time, names_to = "energy_type", values_to = "kWh") %>% 
+  filter(grepl(".total",energy_type))
+
+ggplot(resstock_load_pa_time_pivot, aes(x=time, y=kWh, fill=energy_type)) + 
+    geom_area()
+
+```
+
+```{r}
+
+```
 
 

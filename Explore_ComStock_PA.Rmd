@@ -1,0 +1,23 @@
+---
+title: "Explore ComStock Data - PA Load Data"
+output: html_notebook
+---
+
+
+```{r}
+library(tidyverse)
+library(googlesheets4)
+```
+
+
+PA Commercial End Use - 2018 weather
+```{r}
+gs4_deauth()
+
+comstock_enduse_pa_amy2018 <- read_sheet("https://docs.google.com/spreadsheets/d/1tohAQTb8sqRFUgMXuzyuJMmcFfMl9BpoMRWNM1MPxTA/edit?usp=sharing")
+
+comstock_enduse_pa_amy2018
+```
+
+
+
