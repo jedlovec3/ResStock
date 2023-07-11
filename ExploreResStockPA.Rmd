@@ -4,7 +4,7 @@ output: html_notebook
 ---
 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(googlesheets4)
 library(hms)
@@ -56,9 +56,9 @@ resstock_load_pa %>%
 
 resstock_load_pa_time_pivot <- resstock_load_pa_time %>% 
   pivot_longer(!time, names_to = "energy_type", values_to = "kWh") %>% 
-  filter(grepl(".total",energy_type))
+  filter(grepl(".total",energy_type) & energy_type != "site_energy.total") 
 
-ggplot(resstock_load_pa_time_pivot, aes(x=time, y=kWh, fill=energy_type)) + 
+ggplot(resstock_load_pa_time_pivot, aes(x=time, y=kWh, fill=energy_type, order=energy_type)) + 
     geom_area()
 
 ```
@@ -66,5 +66,16 @@ ggplot(resstock_load_pa_time_pivot, aes(x=time, y=kWh, fill=energy_type)) +
 ```{r}
 
 ```
+
+Move to Documents folder rather than GDrive
+
+Add in CO2 levels for each energy source
+
+CO2 equivalents
+- look at eGRIDs data
+
+
+
+Publish blog post
 
 
