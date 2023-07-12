@@ -67,7 +67,6 @@ ggplot(resstock_load_pa_time_pivot, aes(x=time, y=kWh, fill=energy_type, order=e
 
 ```
 
-Move to Documents folder rather than GDrive
 
 Add in CO2 levels for each energy source
 
